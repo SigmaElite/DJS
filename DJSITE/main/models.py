@@ -28,7 +28,8 @@ class ClothingItem(models.Model): #модель самого продукта
     sizes = models.ManyToManyField(Size, through='ClothingItemSize',  #through указ как к нему в будущ можно обращ, rel_name как будет в бд отобр, blank=True говорит что поле можно оставить пустым необязат выбир размер товара
                                    related_name='clothing_item', blank=True)#MTMF означ что у каждлго размера может быть сколько угодно товара и у каждого товара скока угодно размера, наследуем модель сайз т.к у товара будут размеры))  
     category = models.ForeignKey(Category, on_delete=models.CASCADE,
-                                 related_name='clothing_items')#on_del при удалении категории удалим все товары которые в нее входят
+                                 related_name='clothing_items')#fK для того чтоб был внеш ключ категори для всех товаров, on_del при удалении категории удалим все товары которые в нее входят
+    image = models.ImageField(upload_to='product/%Y/%m/%d', blank=True)#u_t это папка куда буде загруж, %Y год потом месяц и день
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)#дата созд товара, a_n_a это автодобавл даты после созд товара, n=T что в бд могло быть как на ноль(пустым)
     updated_at = models.DateTimeField(auto_now=True)#дата когда товар был ласт раз изм, a_n=T чтобы авто поменялось

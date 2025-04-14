@@ -1,0 +1,105 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block title %}
+DJSITE
+{% endblock title %}
+
+{% block content %}
+    <h1 class="rev-head text uppercase" id="reverence-title">reverence interlude - ALL</h1>{# если будем провод фильтр по какимлибо категориям то олл будет замен на кат которую выбрали #}
+    <div class="catalog d-flex">
+        <form action="{% url 'main:catalog' %}" method="get" class="sidebar" id="filter-form">
+            <h4 class="price-head">Price Range:</h4>
+            <div class="price-range">
+                <input type="number" name="min_price" id="min_price" placeholder="Min Price" value="{{ request.GET.min_price }}" oninput="debounceApplyFilters()">{# m_p берём с контекста #}
+                <input type="number" name="max_price" id="max_price" placeholder="Max Price" value="{{ request.GET.max_price }}" oninput="debounceApplyFilters()">
+
+
+                <h4 class="category-head">Category:</h4>
+                {% for category in categories %} 
+                    <div class="category-option">
+                        <input type="checkbox" name="category" id="category-{{ category.slug }}" value="{{ category.slug }}" {# будет загораться т.к тип чекбокс, id формир динамич, юзая переменную category.slug #}
+                        {% if category.slug in selected_categories %}checked{% endif %} onchange="">  {# хотим при нажатии на чекбокс загорался цветом checked класс #}
+                        <label for="category-{{ category.slug }}" class='d-flex'>
+                            <div class="category-name">{{ category.name }}</div>  <div class="category-len">{{ category.get_item_count }}</div>{# 2 div для того чтоб у нашей категории было рядом напис колво товаров которые в ней наход #}
+                        </label>
+                    </div>
+                {% endfor %}
+
+                <h4 class="size-head">Size</h4> {# фильтр для размеров #}
+                {% for size in sizes %}
+                     <div class="category-option">
+                        <input type="checkbox" name="size" id="{{ size.name }}" value="{{ size.name }}"
+                        {% if size.name in selected_sizes %}checked{% endif %} onchange="">
+                        <label for="size-{{ size.name }}">{{ size.name }}</label>{# с помощью фор связан с чекбоксом #}
+                     </div>
+                {% endfor %}
+            </div>
+        </form> {# main:catalog переадрес на гл стр main это app name в urls.py #}
+
+        <div class="product-list"> <!--вывод товаров-->
+            <div class="card-container d-flex flex-wrap">
+                {% for item in clothing_items%}
+                    <div class="card">
+                        {% if item.image %}
+                           <img src="{{ item.image.url }}" alt="{{ item.name }}" class="product-image">
+                        {% endif %}
+                        <div class="card-info">
+                            <h5>{{ item.name }}</h5>
+                            <p>${{ item.get_price_with_discount }}</p>
+                        </div>
+                    </div>
+                    {% empty %} <!--empty означ если цикл будет пустой(не будет товаров) то вывод сообщение-->
+                    <p>No products.</p>
+                {% endfor %}
+            </div>  {# d-f чтоб шли слево направо #}
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {  //DCL Дожидается полной загрузки HTML-документа
+            const checkboxes = document.querySelectorAll('.category-option input[type="checkbox"]');// наход все чекбоксы по cat-opt
+            const form = document.getElementById('filter-form')
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    form.submit(); //при нажатии на чекбокс форма изм на сабмит и отправл данные на сервер что необход произ фильтрацию
+                });
+            });
+        });
+
+        let timeout;
+        function debounceApplyFilters() {  //чтоб когда юзер вводил price range через секунду оно применялось(перезагруз стр с нужными параметрами)
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                const form = document.getElementById('filter-form');
+                form.submit();
+            }, 1000); // если чёт введем в форму сраб фильтр и чрез сек сраб сабмит
+        }
+
+        function applyFilters() {  //чтоб изм тайтл на выбранную категорию при фильр категорий
+            const form = document.getElementById('filter-form');
+            form.submit();
+            updateTitle(); 
+        }
+
+        function updateTitle() {
+            const checkboxes = document.querySelectorAll('input[name="category"]:checked');//запис ток выбранные категории вчекбоксы
+            const titleElement = document.getElementById('reverence-title');
+
+            if (checkboxes.length > 0) {
+                const selectedCategories = Array.form(checkboxes).map(checkbox => {
+                    const categoryText = checkbox.nextElementSibling.textContent.trim();
+                    return categoryText;
+                });
+                titleElement.textContent = `REVERENCE INTERLUDE - ${selectedCategories.join(', ')}`;//, для того если будет несколько кат то для дальнейш их перечисл
+            } else {
+                titleElement.textContent = 'REVERENCE INTERLUDE - ALL';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateTitle);//чтоб авто изм название
+
+    </script>
+{% endblock content %}

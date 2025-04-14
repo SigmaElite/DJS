@@ -4,7 +4,7 @@ from django.db.models import Q #это для выполн поиска и фи�
 
 class CatalogView(ListView):
      #предсиавл для каталога
-     models = ClothingItem
+     model = ClothingItem
      template_name = 'main/product/list.html'
      context_object_name = 'clothing_items' #c_o_n указ под каким именем список товаров (ClothingItem) можно обратиться в шаблоне list.html
 
@@ -12,17 +12,17 @@ class CatalogView(ListView):
      def get_queryset(self):
           queryset = super().get_queryset()#здесь просто список товаров из моей бд которым можно манипулировать как угодно, ниже делаем переменные для дальнейшей фильтрации в нашем каталоге по неким параметрам
           category_slugs = self.request.GET.getlist('category') #здесь фильтр по категориям, получаем их в списки через getlist('category')
-          sizes_names = self.request.GET.getlist('size')#получ размеры одежды
-          min_price = self.request.GET.getlist('min_price')
-          max_price = self.request.GET.getlist('max_price')
+          size_names = self.request.GET.getlist('size')#получ размеры одежды
+          min_price = self.request.GET.get('min_price')
+          max_price = self.request.GET.get('max_price')
    
           if category_slugs:
                queryset = queryset.filter(category__slug__in=category_slugs)#c__s__in функц которая фильтрует категории котор выбраны в cat_slugs
 
-          if sizes_names:
+          if size_names:
                queryset = queryset.filter(
-                    Q(sizes__name__in=sizes_names) & Q(sizes__clothing_itemsize_available=True)# & этот знак означ and а q для сложной фильтр и ток с ним можно юзать такие знаки, 1 выбраны ли в фильтрации размеры,  2 проверка доступности товара в этом размере
-               )
+                    Q(sizes__name__in=size_names) & Q(sizes__clothingitemsize__available=True)# & этот знак означ and а q для сложной фильтр и ток с ним можно юзать такие знаки, 1 выбраны ли в фильтрации размеры,  2 проверка доступности товара в этом размере
+               ).distinct()  #изза distinct будет вывод ток один товар при выборе нескольки размеров
 
           if min_price:
                queryset = queryset.filter(price__gte=min_price)# будет показ все что gte больше или равно цене указанной(Greater than or equal), Оставляет товары цена которых ≥ min_price
@@ -47,5 +47,5 @@ class ClothingItemDetailView(DetailView):
      model = ClothingItem
      template_name = 'main/product/detail.html'
      context_object_name = 'clothing_item'
-     slug_field = 'slug'#выбираем "slug" т.к в модели назыв слаг
-     slug_url_kwarg = 'slug'
+     slug_field = 'slug'#указ какое поле модели юзать для поиска объекта.
+     slug_url_kwarg = 'slug'#указ какое имя параметра в URL содержит slug

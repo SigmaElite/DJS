@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}  {% endblock title %}</title>
+
+    {# bootstrap #}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+
+    {# css #}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+    <header class="header sticky-top d-flex align-items-center">
+        <div class="header-logo">
+            <img src="{% static 'img/rev.png' %}" alt="">
+        </div>
+        <div class="search">
+            <form action="" id="search-form" class="search_form" style="display: none;">  <!--в стайле скрыли форму при нажатии на иконку поиска эта форма будет появляться-->
+                <input type="text" name="q" class="form-input" placeholder="Search">
+                <button type="submit" class="btnforsearch"></button><!--будет осуществл поиск-->
+            </form>  
+        </div>
+        <div class="header-nav d-flex gap-4"> <!--без д флекс(превращает элемент в Flexbox-контейнер) будет идти сверху вниз а нужно слева направо геп 4 чтоб было опред расстояние-->
+            <a href="#" class="h-profile">
+                <img src="{% static 'img/profile.png' %}" alt="">
+            </a>
+            <a href="#" class="h-profile">
+                <img src="{% static 'img/cart.png' %}" alt="">
+            </a>
+            <div class="forsearch">
+                <a href="#" id="toggle-search" class="toggle-search">
+                    <img src="{% static "img/search.png"  %}" alt=""> <!--имг и есть кнопка а этот жив обёртка-->
+                </a>
+                <div class="search-popup" id="search-popup" style="display: none;">
+                    <form class="search-form" method="get" action="" id="search-form">
+                        <div class="input-container">
+                            <input type="text" class="form_input" name="q" placeholder="Search">
+                            <button type="submit" class="btnforsearch"></button>
+                        </div>
+                    </form> <!--при нажатии на эту форму будет повлятся форма для ввода самого текста у которой класс сёч-форм -->
+                </div>
+            </div>
+        </div><!--иконки которые будут располог в правой части-->
+    </header>  <!-- s-t означ что при прокрут стр вниз хедер ост сверху  -->
+
+    <div class="container"> {# контейнер это параметр который ограни ширину разместимого текста на стр #}
+        {% block content %}
+
+        {% endblock content %}
+    </div>
+
+    {# этот скрипт для работы нажатия кнопки, при нажатии будет осуществл функц #}
+    <script>    
+        document.getElementById('toggle-search').addEventListener('click', function(event) {
+            event.preventDefault();
+            const searchPopup = document.getElementById('search-popup'); //Находит элемент с id="search-popup" и сохраняет его в переменную searchPopup
+
+            if (searchPopup.style.display === 'none' || searchPopup.style.display === '')  {  //в случае клика если дисплей равен none то он убирается и снова видно форму
+                searchPopup.style.display = 'block';
+            } else {
+                searchPopup.style.display = 'none';
+            }
+        })
+    </script>
+
+    {# js for bootstrap #}
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>    
+</body>
+</html>
