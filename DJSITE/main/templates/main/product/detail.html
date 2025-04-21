@@ -1,0 +1,102 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block title %}{{ clothing_item.name }}{% endblock title %}{{ clothing_item.name }}
+
+{% block content %}
+    <div class="detail-product d-flex">
+        <div class="detail-img d-flex justify-content-center">
+            {% for image in clothing_item.images.all %}
+                {% if image.image %}
+                   <img src="{{ image.image.url }}" style="display: none;" alt="{{ clothing_item.name }}" class="detail-image" data-index="{{ forloop.counter0 }}"><!--1 img(переменная которую задали в цикле) это объект модели а второе имг это поле в этом объекте-->
+                {% endif %}
+            {% endfor %}  <!--обр к модели имагес-->
+            <div class="image-nav">
+                <button class="prevBtn">&lsaquo;</button> <!-- аббр для вывода стрелки влево-->
+                <button class="nextBtn">&rsaquo;</button><!-- стрелка влправо -->
+            </div>
+        </div>
+
+        <div class="detail-description">
+            <h2>{{ clothing_item.name }}</h2>
+            <h3 class="item-desc">{{ clothing_item.description|linebreaks }}</h3>
+            <div class="sizes">
+                <p>Available sizes:
+                    <ul class="sizes-list d-flex gap-3"> <!--g-3 чтоб имели расст между с собой слева направо будут-->
+                        {% for item_size in available_sizes %}
+                            <li class="size-name d-flex justify-content-center align-items-center" data-size="{{ item_size.size.name }}">
+                                {{ item_size.size.name }}
+                            </li> <!-- a-i-c для того чтоб цифру в кнопке разместить ровно в середине -->
+                        {% empty %} <!-- Контент, который будет отображен, если коллекция(нету доступ размеров) пуста -->
+                            <li>No available sizes.addEventListener</li>
+                        {% endfor %}
+                    </ul>
+                </p>
+            </div>
+            {% if clothing_item.discount %}
+                <div class="cart-discount d-flex gap-2">
+                    <p class="line">${{ clothing_item.price }}</p>
+                    <p class="price">${{ clothing_item.get_price_with_discount }}</p>
+                </div><!-- gap 2(8px)который устанавливает фиксированное расстояние между элементами-->
+            {% else %}
+                <p class="detail-price">
+                    ${{ clothing_item.price }}
+                </p>
+            {% endif %}
+            <div class="detail-cart-form">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="select-sizee d-flex gap-2">
+                        <label for="size">Size:</label>
+                        <div id="size-display">
+                            unselected
+                        </div>
+                    </div>
+                    <input type="hidden" name="size" id="size" required> <!--это поле отправл на сервер req Указ, что поле обязательно для заполнения-->
+                    <button type="submit" class="default-btn mt-3">Add to cart</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sizeItems = document.querySelectorAll('.size-name')
+        const sizeDisplay = document.getElementById('size-display')
+        const sizeInput = document.getElementById('size')
+
+        sizeItems.forEach(item => {  //forEach перебирает каждый элемент в коллекции
+            item.addEventListener('click', () => {
+                sizeInput.value = item.getAttribute('data-size');//sIn.v Устанавливает значение скрытого поля ввода (<input type="hidden">) равным выбранному размеру например, "S", "M", "L".
+                sizeDisplay.textContent = item.getAttribute('data-size');
+                sizeItems.forEach(i => i.classList.remove('detail-selected'));//чтоб убрать детеёл класс у невыбраныых и получ что нельзя выбор два размера если выбрал один и потом второй то у первого забир класс d-s
+                item.classList.add('detail-selected');
+            });
+        })
+
+        const images = document.querySelectorAll('.detail-image'); //qS используется для выбора всех элементов, соответствующих указанному CSS-селектору
+        const prevBtn = document.querySelector('.prevBtn');
+        const nextBtn = document.querySelector('.nextBtn');
+        let currentIndex = 0;
+
+        if (images.length > 0) {
+            images[currentIndex].style.display = 'block';
+
+            if (images.length === 1) { //если есть одна фото то
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            } else {
+                prevBtn.addEventListener('click', () => {
+                    images[currentIndex].style.display = 'none';// Скрываем текущее изображение
+                    currentIndex = (currentIndex - 1 + images.length) % images.length; //Обновляем индекс для предыдущего изображения
+                    images[currentIndex].style.display = 'block'; //эл будет отобр как блок на стр
+                }) ;
+
+                nextBtn.addEventListener('click', () => {
+                    images[currentIndex].style.display = 'none';
+                    currentIndex = (currentIndex + 1 ) % images.length;
+                    images[currentIndex].style.display = 'block'; //эл будет отобр как блок на стр
+                }) ;
+            }
+        }
+    </script>
+{% endblock content %}

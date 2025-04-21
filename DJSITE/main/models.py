@@ -21,6 +21,10 @@ class Category(models.Model):
         verbose_name = 'category'
         verbose_name_plural = 'categories'
 
+
+    def get_item_count(self):
+        return ClothingItem.objects.filter(category=self).count()#подсчет колва товара     
+
 class ClothingItem(models.Model): #модель самого продукта   
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)#будем переходить для подробных характеристик товара
@@ -48,10 +52,21 @@ class ClothingItem(models.Model): #модель самого продукта
 
 
 class ClothingItemSize(models.Model):#здесь делаем связь всего с товаром(сделали соотношение самого товара(одежды) и его размера)
-    clothing_item = models.ForeignKey(ClothingItem, on_delete=models.CASCADE)#берём модель товара
+    clothing_item = models.ForeignKey(ClothingItem, on_delete=models.CASCADE)#берём модель товара, является внешним ключом к модели ClothingItem
     size = models.ForeignKey(Size, on_delete=models.CASCADE)
     available = models.BooleanField(default=True)#это для того чтобы на опред товаре могли делать доступными или не доступными размеры
 
 
     class Meta:
         unique_together = ('clothing_item', 'size')#для каждого товара уникальынй размер и наоборот. Например, нельзя дважды добавить размер "XL" для товара "Футболка
+
+
+class ItemImage(models.Model):
+    product = models.ForeignKey(ClothingItem, related_name='images', on_delete=models.CASCADE)
+
+    image = models.ImageField(upload_to='product/%Y/%m/%d', blank=True) 
+
+
+    def __str__(self):  #в админке мета в бд
+        return f'{self.product.name} - {self.image.name}'
+

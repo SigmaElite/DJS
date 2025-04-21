@@ -1,10 +1,16 @@
 from django.contrib import admin
-from .models import Size, Category, ClothingItem, ClothingItemSize 
+from .models import Size, Category, ClothingItem, ClothingItemSize, ItemImage
+
 
 
 class ClothingItemSizeInline(admin.TabularInline):  #это нужно для того чтобы на стр самого товара можно было дабвл неогрнич колво размеров по желанию(скок размеров будет сток и добавл можно)
     model = ClothingItemSize
     extra = 4 # ← появиться 4 строки для выбора для новых размеров(например при редактировании какогото товара)
+
+
+class ItemImageInline(admin.TabularInline):
+    model = ItemImage
+    extra = 4
 
 
 @admin.register(Size)#декоратор регистр добавл модель в админку
@@ -26,4 +32,4 @@ class ClothingItemAdmin(admin.ModelAdmin):
     list_filter = ('available', 'category')#параметр для фильтрации
     prepopulated_fields = {'slug': ('name',)}
     ordering = ('-created_at',)#ord это метод фильтрации когда в админке зайдём в список товаров будет идти от самым новых к самым старым поэтому поставили -
-    inlines = [ClothingItemSizeInline]#для того чтоб в адимнке могли добавл наши размеры товара
+    inlines = [ClothingItemSizeInline, ItemImageInline]#для того чтоб в адимнке могли добавл наши размеры товара

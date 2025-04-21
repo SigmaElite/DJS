@@ -1,5 +1,5 @@
 from django.views.generic import ListView, DetailView #убрали рендер т.к пишем классовые представл 
-from .models import ClothingItem, Category, Size
+from .models import ClothingItem, Category, Size, ClothingItemSize
 from django.db.models import Q #это для выполн поиска и фильтрации
 
 class CatalogView(ListView):
@@ -49,3 +49,10 @@ class ClothingItemDetailView(DetailView):
      context_object_name = 'clothing_item'
      slug_field = 'slug'#указ какое поле модели юзать для поиска объекта.
      slug_url_kwarg = 'slug'#указ какое имя параметра в URL содержит slug
+
+     def get_context_data(self, **kwargs):
+          context = super().get_context_data(**kwargs)
+          clothing_item = self.object  #получ товар выбранный на стр(которая открыта)
+          available_sizes = ClothingItemSize.objects.filter(clothing_item=clothing_item, available=True) #cl_i=cl_i мы в этот(которыйчуть выше) кл айтем заосываем знач из бд
+          context['available_sizes'] = available_sizes
+          return context

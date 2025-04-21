@@ -48,7 +48,7 @@ p {
 .container {
     max-width: 1400px; /* Элемент .container не сможет быть шире 1400 пикселей. */
     margin: 0 auto;  /* по вертикали будет 0 по ширине авто */
-    padding: 40px 0;
+    padding: 40px;
 }
 
 .header {
