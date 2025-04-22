@@ -14,9 +14,9 @@
 </head>
 <body>
     <header class="header sticky-top d-flex align-items-center">
-        <div class="header-logo">
+        <a class="header-logo" href="{% url "main:catalog" %}"> <!--теперь при нажатии на кнопку в левом верх углу будет заход в каталог каталог берём из юрлс для обращ-->
             <img src="{% static 'img/rev.png' %}" alt="">
-        </div>
+        </a>
         {% comment %}<div class="search">
             <form action="" id="search-form" class="search_form d-flex" style="display: none;">  <!--в стайле скрыли форму при нажатии на иконку поиска эта форма будет появляться-->
                 <input type="text" name="q" class="form_input" placeholder="Search">
