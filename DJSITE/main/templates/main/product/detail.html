@@ -1,7 +1,7 @@
 {% extends "main/base.html" %}
 {% load static %}
 
-{% block title %}{{ clothing_item.name }}{% endblock title %}{{ clothing_item.name }}
+{% block title %}DJSITE - {{ clothing_item.name }}{% endblock title %}{{ clothing_item.name }}
 
 {% block content %}
     <div class="detail-product d-flex">
@@ -36,7 +36,7 @@
             {% if clothing_item.discount %}
                 <div class="cart-discount d-flex gap-2">
                     <p class="line">${{ clothing_item.price }}</p>
-                    <p class="price">${{ clothing_item.get_price_with_discount }}</p>
+                    <p class="price">${{ clothing_item.get_price_with_discount|floatformat:2  }}</p>
                 </div><!-- gap 2(8px)который устанавливает фиксированное расстояние между элементами-->
             {% else %}
                 <p class="detail-price">
@@ -44,7 +44,7 @@
                 </p>
             {% endif %}
             <div class="detail-cart-form">
-                <form action="" method="post">
+                <form action="{% url 'cart:cart_add' clothing_item.id  %}" method="post">  <!--'куда отправл' и отправл cl_item -->
                     {% csrf_token %}
                     <div class="select-sizee d-flex gap-2">
                         <label for="size">Size:</label>

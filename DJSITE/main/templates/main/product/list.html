@@ -2,11 +2,11 @@
 {% load static %}
 
 {% block title %}
-DJSITE
+DJSITE - Catalog
 {% endblock title %}
 
 {% block content %}
-    <h1 class="rev-head text uppercase" id="reverence-title">reverence interlude - ALL</h1>{# если будем провод фильтр по какимлибо категориям то олл будет замен на кат которую выбрали #}
+    <h1 class="rev-head text uppercase" id="reverence-title">DJSITE - ALL</h1>{# если будем провод фильтр по какимлибо категориям то олл будет замен на кат которую выбрали #}
     <div class="catalog d-flex">
         <form action="{% url 'main:catalog' %}" method="get" class="sidebar" id="filter-form">
             <h4 class="price-head">Price Range:</h4>
