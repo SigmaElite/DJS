@@ -46,8 +46,8 @@ class ClothingItem(models.Model): #модель самого продукта
     
     def get_price_with_discount(self):
         if self.discount > 0:
-            return self.price * (1 - (self.discount / 100))
-        return self.price
+            return round(self.price * (1 - (self.discount / 100)), 2)#r 2 чтоб после запят вывод 2 числа после запят
+        return round(self.price, 2)
     
 
 
