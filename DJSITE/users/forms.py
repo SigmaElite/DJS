@@ -4,7 +4,7 @@ from .models import User
 import re
 
 
-class UserRegistration(UserCreationForm):
+class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('email', 'password1', 'password2')
