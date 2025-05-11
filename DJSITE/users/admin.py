@@ -30,7 +30,7 @@ class UserAdmin(admin.ModelAdmin):
         }),
     )
 
-    add_fieldets = (
+    add_fieldets = (  #add_fieldsets — это атрибут класса UserAdmin, который используется для настройки формы добавления нового пользователя .
         (None, {
             'classes': ('wide',),
             'fields': ('email', 'password1', 'password2', 'is_active', 'is_staff', 'is_superuser')

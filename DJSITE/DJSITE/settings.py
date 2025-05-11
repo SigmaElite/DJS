@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'main',
     'cart',
     'users',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +140,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 CART_SESSION_ID = 'cart' # cart имя ключа, будет использ для доступа к данным корзины в сессии. чтоб не хран инфу в бд о каждом юзере оно будет хран в куки и он подгруж(т.е делаем корзину по сессияМ
 
 AUTH_USER_MODEL = 'users.User' # указ что теперь аутент заним наша модель 
+
+STRIPE_TEST_PUBLIC_KEY = os.getenv('STRIPE_TEST_PUBLIC_KEY')
+STRIPE_TEST_SECRET_KEY = os.getenv('STRIPE_TEST_SECRET_KEY')
