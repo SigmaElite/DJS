@@ -1,0 +1,13 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block title %}DJSITE - Order Success{% endblock title %}
+
+{% block content %}
+    <div class="success-order-page text-center">
+        <h2>Thank you for your order!</h2>
+        <p>Your order has been succesfully processed. We will be in touch with you shortly.</p>
+        <a href={% url "main:catalog" %}>Back to catalog</a>
+    </div>
+{% endblock content %}
+

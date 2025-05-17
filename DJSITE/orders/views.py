@@ -35,7 +35,7 @@ def order_create(request):
                 size_instance = Size.objects.get(name=item['size'])
                 OrderItem.objects.create(  #ниже заполн параметры OrItem
                     order=order,
-                    clothing_item=['item'], #по ключу получ
+                    clothing_item=item['item'], #по ключу получ
                     size=size_instance,
                     quantity=item['quantity'],
                     total_price=item['total_price'],
@@ -43,7 +43,7 @@ def order_create(request):
 
             try: #созд сессию в страйпе 
                 session = stripe.checkout.Session.create(
-                    payment_method_types=['cart'],
+                    payment_method_types=['card'],
                     line_items=[
                         {
                             'price_data':{ 
@@ -70,7 +70,7 @@ def order_create(request):
                 })
             
     form = OrderForm(initial={  #форма для иниц даннных профиля если чел зарег и снова заход
-        'first_name': request.user.first_nameapartment_number,
+        'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         'middle_name': request.user.middle_name,
         'city': request.user.city,

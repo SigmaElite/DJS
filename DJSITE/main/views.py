@@ -15,6 +15,7 @@ class CatalogView(ListView):
           size_names = self.request.GET.getlist('size')#получ размеры одежды
           min_price = self.request.GET.get('min_price')
           max_price = self.request.GET.get('max_price')
+          search_query = self.request.GET.get('q')
    
           if category_slugs:
                queryset = queryset.filter(category__slug__in=category_slugs)#c__s__in функц которая фильтрует категории котор выбраны в cat_slugs
@@ -26,8 +27,15 @@ class CatalogView(ListView):
 
           if min_price:
                queryset = queryset.filter(price__gte=min_price)# будет показ все что gte больше или равно цене указанной(Greater than or equal), Оставляет товары цена которых ≥ min_price
+          
           if max_price:
                queryset = queryset.filter(price__lte=max_price)# будет показ все что меньше или равно цене указанной(Less Than or Equal) 
+
+          if search_query:
+               queryset = queryset.filter(
+                    Q(name__icontains=search_query) |
+                    Q(description__icontains=search_query)
+               ).distinct()
          
           return queryset
      

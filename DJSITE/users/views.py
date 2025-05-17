@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate
 from .forms import UserRegistrationForm, UserLoginForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-#from orders.models import Order
+from orders.models import Order
 
 
 def register(request):#заход в регистр вам дается форма потом заполн и отправл ее и проверка на валид(если все добра) и созд, сохр нового юзера
@@ -12,11 +12,11 @@ def register(request):#заход в регистр вам дается форм
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('users:login')
-        else:
-            form = UserRegistrationForm
+            return redirect('users:user_login')
+    else:
+        form = UserRegistrationForm()
         
-        return render(request, 'users/register.html', {'form': form})#3 контекст вот рендер указ какой шаблон будет рендериться
+    return render(request, 'users/register.html', {'form': form})#3 контекст вот рендер указ какой шаблон будет рендериться
     
 
 def user_login(request):
@@ -29,6 +29,8 @@ def user_login(request):
             if user is not None:
                 login(request, user)
                 return redirect('main:catalog')
+            else: 
+                form.add_error(None, 'Invalid email or password.')
     else:
         form = UserLoginForm()
 
@@ -37,5 +39,22 @@ def user_login(request):
 @login_required(login_url='/users/login') #это означ что ток авториз могут выйти из акка
 def user_logout(request):
     logout(request)
-    return redirect('users:login') 
+    return redirect('users:user_login') 
 
+
+@login_required(login_url='/users/login')
+def profile(request):
+    user = request.user
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=user)  #instance использ для привязки формы к существующему объекту модели.например, для обновления или редактирования существующих данных).
+        if form.is_valid():
+            form.save()
+            return redirect('users:profile')
+    else:
+        form = UserProfileForm(instance=user)
+    orders = Order.objects.filter(user=user)
+
+    return render(request, 'users/profile.html', {
+        'form': form,
+        'orders': orders,
+        })
